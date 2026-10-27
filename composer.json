@@ -1,0 +1,30 @@
+{
+    "name": "mirandaspa/library-php-iam",
+    "description": "PHP client of iam, the permissions service of Repuestos Miranda: manifest, service account token and authz client.",
+    "type": "library",
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "symfony/yaml": "^4.4 || ^5.0 || ^6.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.5 || ^9.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Miranda\\Iam\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Miranda\\Iam\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": "phpunit"
+    }
+}
