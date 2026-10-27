@@ -1,0 +1,49 @@
+# CI for the PHP library: tests on the oldest and a recent PHP, and coverage (>= 70%).
+# Actions are pinned by commit SHA (comment = version) to avoid moved tags.
+# A library publishes no image: consumers pin it with a git tag (vX.Y.Z).
+name: ci
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Tests (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["7.4", "8.2"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: curl, json, mbstring
+          # Coverage only where it is measured (the newest PHP of the matrix).
+          coverage: ${{ matrix.php == '8.2' && 'pcov' || 'none' }}
+          tools: composer:v2
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+      - name: Test
+        if: matrix.php != '8.2'
+        run: vendor/bin/phpunit
+      - name: Test with coverage
+        if: matrix.php == '8.2'
+        run: vendor/bin/phpunit --coverage-clover coverage/clover.xml --coverage-text
+      - name: Coverage threshold (70%)
+        if: matrix.php == '8.2'
+        run: |
+          php -r '
+          $xml = simplexml_load_file("coverage/clover.xml");
+          $m = $xml->project->metrics;
+          $pct = 100 * (int) $m["coveredstatements"] / max(1, (int) $m["statements"]);
+          printf("statement coverage: %.1f%%\n", $pct);
+          exit($pct >= 70 ? 0 : 1);
+          '
