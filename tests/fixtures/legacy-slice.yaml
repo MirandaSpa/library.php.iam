@@ -1,0 +1,60 @@
+# Slice of the legacy manifest used as a test fixture (same shape as the real one).
+service: legacy
+permissions:
+  - id: storage:packing:view
+    label: Ver vouchers a empacar
+    description: Permite ver los vouchers por empacar y su detalle.
+    scope: branch
+  - id: storage:packing:update
+    label: Actualizar un voucher en empaque
+    description: Permite cambiar el estado y la glosa de un voucher durante el empaque.
+    scope: branch
+    audit: always
+  - id: print:impression:view
+    label: Ver un trabajo de impresión
+    description: Permite consultar el estado de un trabajo de impresión.
+    scope: branch
+  - id: print:impression:update-state
+    label: Cambiar el estado de una impresión
+    description: Permite actualizar el estado de un trabajo de impresión.
+    scope: branch
+    audit: always
+  - id: print:user:view
+    label: Ver la configuración de impresión de usuarios
+    description: Permite ver las impresoras (IP y puerto) asignadas a los usuarios.
+    scope: branch
+  - id: print:user:configure
+    label: Configurar la impresión de un usuario
+    description: Permite definir la IP y el puerto de impresión y de picking de un usuario.
+    scope: branch
+    audit: always
+  - id: it:helpdesk:view
+    label: Ver solicitudes de la mesa de ayuda
+    description: Permite ver las solicitudes, sus tipos y recibir sus actualizaciones.
+    scope: global
+routes:
+  - method: GET
+    path: /api/empaque/voucher
+    permission: storage:packing:view
+  - method: PUT
+    path: /api/empaque/voucher/{id}
+    permission: storage:packing:update
+  - method: GET
+    path: /api/impresion/impresiones/{id}
+    permission: print:impression:view
+  - method: PUT
+    path: /api/impresion/impresiones/{id}
+    permission: print:impression:update-state
+  - method: GET
+    path: /api/impresion/usuarios
+    permission: print:user:view
+  - method: PUT
+    path: /api/impresion/usuarios/{id}
+    permission: print:user:configure
+  - method: GET
+    path: /api/informatica/requerimientos
+    permission: it:helpdesk:view
+  - method: GET
+    path: /api/sucursales/sucursal
+    public: true
+
